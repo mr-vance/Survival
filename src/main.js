@@ -390,7 +390,7 @@ class Level1 {
     setTimeout(() => {
       startBtn.addEventListener("click", () => {
         if (startBtn.innerText == "START") {
-          document.querySelector(".modal").style.display = "none";
+          document.querySelector(".custom-modal").style.display = "none";
           const loadingScreen = document.querySelector(".loading-screen");
           loadingScreen.classList.add("fade-out");
           loadingScreen.addEventListener("transitionend", this.onTransitionEnd);

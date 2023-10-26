@@ -17,7 +17,7 @@ body {
         rgba(148, 48, 48, 0.2),
         rgba(167, 67, 67, 0.4)
     ),
-    url(./win.jpeg) center no-repeat;
+    url(./Level1win.jpg) center no-repeat;
     background-size: cover;
     overflow: relative;
     display: flex;
