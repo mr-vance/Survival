@@ -334,27 +334,20 @@ function init() {
 
   // objects
 
-  // Preload your textures
-  var textureLoader = new THREE.TextureLoader();
-  var textures = [
-    textureLoader.load('/images/level3/wall-1.jpg'), 
-    textureLoader.load('/images/level3/wall-2.jpg'), 
-    textureLoader.load('/images/level3/wall-3.jpeg') 
-  ];
-
   var boxGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
   boxGeometry.translate(0, 0.5, 0);
-
-  for (var i = 0; i < 500; i++) {
-    // Randomly select a texture from the array
-    var randomTexture = textures[Math.floor(Math.random() * textures.length)];
-
+  
+  var boxMaterialArray = []; // Create an array to store materials for the boxes
+  var boxCounters = Array(10).fill(0); // Assuming there are 10 boxes
+  
+  for (var i = 0; i < 10; i++) {
     var boxMaterial = new THREE.MeshStandardMaterial({
-      map: randomTexture, // Assign the randomly selected texture
       flatShading: false,
       vertexColors: false
     });
-
+  
+    boxMaterialArray.push(boxMaterial); // Add the material to the array
+  
     var mesh = new THREE.Mesh(boxGeometry, boxMaterial);
     mesh.position.x = Math.random() * 1600 - 800;
     mesh.position.y = 0;
@@ -367,7 +360,11 @@ function init() {
     mesh.updateMatrix();
     mesh.matrixAutoUpdate = false;
     world.add(mesh);
+  
+    // Initialize the shot counter for each box to 0
+    boxCounters.push(0);
   }
+  
 
   scene.add(world);
 
@@ -403,6 +400,16 @@ function animate() {
       if ( intersects.length > 0 ) {
         var intersect = intersects[ 0 ];
         makeParticles(intersect.point);
+        var index = world.children.indexOf(intersect.object);
+          // Check if the box has not been shot 5 times
+          if (boxCounters[index] < 5) {
+            boxCounters[index]++; // Increment the shot counter
+
+            if (boxCounters[index] === 5) {
+              // If the box has been shot 5 times, remove it
+              world.remove(intersect.object);
+            }
+          }
       }
     }
 
