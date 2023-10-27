@@ -339,7 +339,7 @@ function init() {
   
   var boxMaterials = []; // To store the original materials for the boxes
   
-  for (var i = 0; i < 10; i++) {
+  for (var i = 0; i < 15; i++) {
 
     var boxMaterial = new THREE.MeshStandardMaterial({
       flatShading: false,
@@ -379,6 +379,7 @@ function onWindowResize() {
 
 }
 
+var remainingGreenBoxes = 15; // Assuming there are 10 green boxes initially
 
 function animate() {
   requestAnimationFrame(animate);
@@ -400,6 +401,13 @@ function animate() {
             // If the box has been shot 5 times, change its color to red
             if (intersect.object.material.color.getHex() === 0x00ff00) {
               intersect.object.material.color.set(0xff0000); // Red color
+
+              remainingGreenBoxes--; // Decrease the count of remaining green boxes
+
+              if (remainingGreenBoxes === 0) {
+                // All boxes have turned red, end the game and navigate to winScreen3.html
+                window.location.href = 'winScreen3.html';
+              }
             }
       }
     }
