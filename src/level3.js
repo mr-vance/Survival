@@ -337,16 +337,15 @@ function init() {
   var boxGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
   boxGeometry.translate(0, 0.5, 0);
   
-  var boxMaterialArray = []; // Create an array to store materials for the boxes
-  var boxCounters = Array(10).fill(0); // Assuming there are 10 boxes
+  var boxMaterials = []; // To store the original materials for the boxes
   
   for (var i = 0; i < 10; i++) {
+
     var boxMaterial = new THREE.MeshStandardMaterial({
       flatShading: false,
-      vertexColors: false
+      vertexColors: false,
+      color: 0x00ff00 // Set the initial color to green
     });
-  
-    boxMaterialArray.push(boxMaterial); // Add the material to the array
   
     var mesh = new THREE.Mesh(boxGeometry, boxMaterial);
     mesh.position.x = Math.random() * 1600 - 800;
@@ -360,14 +359,14 @@ function init() {
     mesh.updateMatrix();
     mesh.matrixAutoUpdate = false;
     world.add(mesh);
-  
-    // Initialize the shot counter for each box to 0
-    boxCounters.push(0);
+
+    // Store the original material for each box
+    boxMaterials.push(boxMaterial);
+
   }
   
 
   scene.add(world);
-
 
 }
 
@@ -380,36 +379,28 @@ function onWindowResize() {
 
 }
 
+
 function animate() {
+  requestAnimationFrame(animate);
 
-  requestAnimationFrame( animate );
-
-  if ( controls.enabled === true ) {
-
+  if (controls.enabled === true) {
     controls.update();
 
     raycaster.set(camera.getWorldPosition(new THREE.Vector3()), camera.getWorldDirection(new THREE.Vector3()));
-    scene.remove ( arrow );
-    arrow = new THREE.ArrowHelper(raycaster.ray.direction, raycaster.ray.origin, 5, 0x000000 );
-    scene.add( arrow );
+    scene.remove(arrow);
+    arrow = new THREE.ArrowHelper(raycaster.ray.direction, raycaster.ray.origin, 5, 0x000000);
+    scene.add(arrow);
 
     if (controls.click === true) {
-
       var intersects = raycaster.intersectObjects(world.children);
 
-      if ( intersects.length > 0 ) {
-        var intersect = intersects[ 0 ];
+      if (intersects.length > 0) {
+        var intersect = intersects[0];
         makeParticles(intersect.point);
-        var index = world.children.indexOf(intersect.object);
-          // Check if the box has not been shot 5 times
-          if (boxCounters[index] < 5) {
-            boxCounters[index]++; // Increment the shot counter
-
-            if (boxCounters[index] === 5) {
-              // If the box has been shot 5 times, remove it
-              world.remove(intersect.object);
+            // If the box has been shot 5 times, change its color to red
+            if (intersect.object.material.color.getHex() === 0x00ff00) {
+              intersect.object.material.color.set(0xff0000); // Red color
             }
-          }
       }
     }
 
@@ -419,12 +410,12 @@ function animate() {
         particles[pLength].prototype.update(pLength);
       }
     }
-
   }
 
-  renderer.render( scene, camera );
-
+  renderer.render(scene, camera);
 }
+
+
 
 var particles = new Array();
 
