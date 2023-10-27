@@ -12,7 +12,7 @@
 ![Level-1](/readme/level-1.gif)
 
 ## Level 2
-![Not-available](readme/not-available.gif)
+![Not-available](readme/level-2.gif)
 
 ## Level 3
 ![Level-3](readme/level-3.gif)
