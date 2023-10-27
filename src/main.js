@@ -3,14 +3,15 @@ import { BasicCharacterController } from "./charactercontrol.js";
 import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js";
 import { Reflector } from "https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/objects/Reflector.js";
 import { ThirdPersonCamera } from "./thirdpersoncamera.js";
-import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js";
 import { Doll } from "./doll.js";
 import { soundManager } from "./soundManager.js";
 
-const loseMusic = new Audio("../sounds/gunshot.mp3"); //played when a player loses
-let insetWidth, insetHeight;
 let timeLeft;
 let dollLight;
+const fov = 60;
+const aspect = 1920 / 1080;
+const near = 1.0;
+const far = 1000.0;
 let text = document.querySelector(".text");
 const startBtn = document.querySelector(".start-btn");
 const soundOnbtn = document.querySelector(".soundON");
@@ -47,6 +48,86 @@ function fragmentShader() {
 class Level1 {
   constructor() {
     this.Initialize();
+
+      // Create cameras and add them to an array
+      this.cameras = [];
+      this.activeCamera = null;
+  
+      const mainCamera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+      mainCamera.position.set(0, -100, 0);
+      this.cameras.push(mainCamera);
+  
+      const firstPersonCamera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+      firstPersonCamera.position.set(0, 0, 0);
+      this.cameras.push(firstPersonCamera);
+  
+      const topViewCamera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+      topViewCamera.position.set(0, 500, 0);
+      topViewCamera.rotation.set(-Math.PI / 2, 0, 0);
+      this.cameras.push(topViewCamera);
+  
+      // Set the initial active camera
+      this.activeCamera = mainCamera;
+      this.scene.add(this.activeCamera);
+  
+      // Add event listeners for key presses
+      window.addEventListener("keydown", (event) => {
+        if (event.key === "f" || event.key === "F") {
+          this.switchToFirstPersonCamera();
+        } else if (event.key === "t" || event.key === "T") {
+          this.switchToTopViewCamera();
+        } else if (event.key === "c" || event.key === "C") {
+          this.switchToDefaultCamera(); // This line was added
+        }
+      });
+  }
+
+  // Add methods to switch between cameras
+  switchToFirstPersonCamera() {
+    // Set the camera to the first person view
+    // Adjust the camera position, rotation, etc. as needed
+    this.camera.position.set(0, 0, 0);  // Adjust camera position
+    this.camera.rotation.set(0, 0, 0);  // Adjust camera rotation
+    this.scene.add(this.camera);
+    // You may need to update camera settings and controls here
+    // For example, disable the OrbitControls and set the new camera controls
+    // this.controls.enabled = false;
+    // Set the new camera controls for first person view
+    // this.cameraControls = new FirstPersonControls(this.camera, this.renderer.domElement);
+  }
+
+  switchToTopViewCamera() {
+    // Set the camera to the top view
+    // Adjust the camera position, rotation, etc. as needed
+    this.camera.position.set(0, 500, 0);  // Adjust camera position for top view
+    this.camera.rotation.set(-Math.PI / 2, 0, 0);  // Adjust camera rotation for top view
+    this.scene.add(this.camera);
+    // You may need to update camera settings and controls here
+    // For example, disable the OrbitControls and set the new camera controls
+    // this.controls.enabled = false;
+    // Set the new camera controls for top view
+    // this.cameraControls = new TopViewControls(this.camera, this.renderer.domElement);
+  }
+
+  switchToDefaultCamera() {
+
+    // Set the camera to the default third person view
+    // Adjust the camera position, rotation, etc. as needed
+    const fov = 50;
+    const aspect = 1920 / 1080;
+    const near = 1.0;
+    const far = 1000.0;
+
+    //Hear we added camera
+    // we carefully selected values to have focal view of the
+    this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+    this.camera.position.set(0, 200, 500);
+    this.camera.rotation.set(-Math.PI / 6, 0, 0);  // Adjust camera rotation for top view
+    this.scene.add(this.camera);
+    // You may need to update camera settings and controls here
+    // For example, disable the first person or top view controls and re-enable OrbitControls
+    // this.cameraControls.dispose();
+    // this.controls.enabled = true;
   }
 
   Initialize() {
@@ -83,6 +164,7 @@ class Level1 {
     soundOffbtn.addEventListener("click", () => {
       soundManager.backgroundSong.pause();
     });
+
     const fov = 60;
     const aspect = 1920 / 1080;
     const near = 1.0;
@@ -92,14 +174,8 @@ class Level1 {
     // we carefully selected values to have focal view of the
     this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     this.camera.position.set(0, -100, 0);
-
-    //top view & Orbit Controls Camera
-    // this.cameraTop = new THREE.PerspectiveCamera(45, 60, 2, 1000);
-    // this.cameraTop.position.set(30, 250, 500);
-
-    //adds both camera to the scene
     this.scene.add(this.camera);
-    // this.scene.add(this.cameraTop);
+
 
     //add skybox jpg images on xn,xp,yn,yp,zn,zp
     const loader = new THREE.CubeTextureLoader();
