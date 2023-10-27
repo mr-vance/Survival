@@ -466,11 +466,11 @@ class Level1 {
   }
 
   async check() {
-    // if (this.dollState.getState() == 'red' && (this.playerControls.State == 'walk' || this.playerControls.State == 'run' || this.playerControls.State == 'dance')) {
-    //   // loseMusic.play();
-    //   await this.delay(500);
-    //   window.location.replace("../html/loseScreen.html");
-    // }
+    if (this.dollState.getState() == 'red' && (this.playerControls.State == 'walk' || this.playerControls.State == 'run' || this.playerControls.State == 'dance')) {
+      // loseMusic.play();
+      await this.delay(500);
+      window.location.replace("../html/loseScreen.html");
+    }
     if (timeLeft == 0 && this.playerControls._position.z > -200) {
       // loseMusic.play();
       await this.delay(1000);
