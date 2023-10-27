@@ -1,4 +1,5 @@
 {
+  "editor.wordWrap": "on",
   "liveServer.settings.port": 5503,
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#65c89b",
