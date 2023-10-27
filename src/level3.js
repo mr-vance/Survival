@@ -370,6 +370,33 @@ function init() {
 
 }
 
+// Define the viewMode variable and the toggleView function
+var viewMode = 'firstPerson';
+
+function toggleView() {
+  if (viewMode === 'firstPerson') {
+    // Switch to top view
+    viewMode = 'topView';
+    // Set the camera to a top view position
+    camera.position.set(0, 1000, 0);  // Adjust the values as needed
+    camera.lookAt(0, 0, 0);
+  } else {
+    // Switch back to first-person view
+    viewMode = 'firstPerson';
+    // Reset the camera to the original position
+    camera.position.set(0, 0, 0);  // Adjust the values as needed
+    camera.lookAt(0, 0, 1);  // Adjust the look-at point as needed
+  }
+}
+
+// Add an event listener for the 'C' key to toggle views
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'c' || event.key === 'C') {
+    toggleView();
+  }
+});
+
+
 function onWindowResize() {
 
   camera.aspect = window.innerWidth / window.innerHeight;
